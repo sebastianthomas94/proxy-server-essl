@@ -35,6 +35,7 @@ app.use(async (req, res) => {
     });
 
     const data = await response.text();
+    console.log(`Response from proxy: ${data}`);
     res.status(response.status).send(data);
   } catch (error) {
     console.error("Error:", error);
