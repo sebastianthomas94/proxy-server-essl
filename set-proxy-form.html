@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Proxy URL</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-top: 0;
+    }
+    .current-url {
+      background-color: #e3f2fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .current-url strong {
+      color: #1976d2;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1976d2;
+    }
+    button {
+      background-color: #1976d2;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Set Proxy URL</h1>
+    <div class="current-url">
+      <strong>Current Proxy URL:</strong> <span id="current-proxy">Loading...</span>
+    </div>
+    <form action="/set-proxy" method="POST">
+      <label for="proxyUrl">New Proxy URL:</label>
+      <input 
+        type="text" 
+        id="proxyUrl" 
+        name="proxyUrl" 
+        placeholder="https://example.com"
+        required
+      />
+      <button type="submit">Update Proxy URL</button>
+    </form>
+  </div>
+  
+  <script>
+    // Fetch and display current proxy URL
+    fetch('/get-proxy')
+      .then(response => response.json())
+      .then(data => {
+        const currentProxySpan = document.getElementById('current-proxy');
+        const proxyUrlInput = document.getElementById('proxyUrl');
+        currentProxySpan.textContent = data.proxyUrl || 'Not set';
+        proxyUrlInput.value = data.proxyUrl || '';
+      })
+      .catch(error => {
+        document.getElementById('current-proxy').textContent = 'Error loading';
+        console.error('Error fetching proxy URL:', error);
+      });
+  </script>
+</body>
+</html>

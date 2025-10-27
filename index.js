@@ -1,6 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -15,12 +20,30 @@ app.use(
 
 // create a rout that proxies every request to google.com
 
-const PROXY_URL = process.env.PROXY_URL;
+let PROXY_URL = process.env.PROXY_URL;
 
 if (!PROXY_URL) {
   console.error("Error: PROXY_URL is not defined in environment variables.");
   process.exit(1);
 }
+
+app.get("/set-proxy", (req, res) => {
+  res.sendFile(path.join(__dirname, "set-proxy-form.html"));
+});
+
+app.get("/get-proxy", (req, res) => {
+  res.json({ proxyUrl: PROXY_URL });
+});
+
+app.post("/set-proxy", (req, res) => {
+  const newUrl = req.body.proxyUrl;
+  if (newUrl) {
+    PROXY_URL = newUrl;
+    res.send(`PROXY_URL updated to: ${PROXY_URL}`);
+  } else {
+    res.status(400).send("Invalid PROXY_URL");
+  }
+});
 
 app.use(async (req, res) => {
   try {
