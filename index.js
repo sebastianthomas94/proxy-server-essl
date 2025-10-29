@@ -69,6 +69,11 @@ let proxyMiddleware = createProxyMiddleware({
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         "unknown";
+      console.log(
+        "all the ips:",
+        req.connection.remoteAddress,
+        req.socket.remoteAddress
+      );
       const userAgent = req.headers["user-agent"] || "unknown";
       console.log(
         `[HTTP] Client ${clientIP} (${userAgent}) - Proxying ${req.method} request to: ${proxyReq.path}`
