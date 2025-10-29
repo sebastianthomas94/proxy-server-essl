@@ -62,10 +62,14 @@ let proxyMiddleware = createProxyMiddleware({
       }
     },
     proxyReq: (proxyReq, req, res) => {
-      console.log(`[HTTP] Proxying ${req.method} request to: ${proxyReq.path}`);
+      const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 'unknown';
+      const userAgent = req.headers['user-agent'] || 'unknown';
+      console.log(`[HTTP] Client ${clientIP} (${userAgent}) - Proxying ${req.method} request to: ${proxyReq.path}`);
     },
     proxyReqWs: (proxyReq, req, socket, options, head) => {
-      console.log(`[WebSocket] Proxying WebSocket connection to: ${proxyReq.path}`);
+      const clientIP = req.socket.remoteAddress || req.connection.remoteAddress || 'unknown';
+      const userAgent = req.headers['user-agent'] || 'unknown';
+      console.log(`[WebSocket] Client ${clientIP} (${userAgent}) - Proxying WebSocket connection to: ${proxyReq.path}`);
     },
     open: (proxySocket) => {
       console.log("[WebSocket] Connection opened");
@@ -91,10 +95,14 @@ function updateProxyMiddleware(newUrl) {
         }
       },
       proxyReq: (proxyReq, req, res) => {
-        console.log(`[HTTP] Proxying ${req.method} request to: ${proxyReq.path}`);
+        const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 'unknown';
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        console.log(`[HTTP] Client ${clientIP} (${userAgent}) - Proxying ${req.method} request to: ${proxyReq.path}`);
       },
       proxyReqWs: (proxyReq, req, socket, options, head) => {
-        console.log(`[WebSocket] Proxying WebSocket connection to: ${proxyReq.path}`);
+        const clientIP = req.socket.remoteAddress || req.connection.remoteAddress || 'unknown';
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        console.log(`[WebSocket] Client ${clientIP} (${userAgent}) - Proxying WebSocket connection to: ${proxyReq.path}`);
       },
       open: (proxySocket) => {
         console.log("[WebSocket] Connection opened");
@@ -123,6 +131,8 @@ const server = app.listen(PORT, () => {
 
 // Enable WebSocket proxying by listening to the upgrade event
 server.on('upgrade', (req, socket, head) => {
-  console.log(`[WebSocket] Upgrade request received for: ${req.url}`);
+  const clientIP = req.socket.remoteAddress || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+  console.log(`[WebSocket] Client ${clientIP} (${userAgent}) - Upgrade request received for: ${req.url}`);
   proxyMiddleware.upgrade(req, socket, head);
 });
